@@ -3,14 +3,11 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+require("dotenv").config();
 
 var apiRouter = require("./routes/api");
 
 var app = express();
-
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -31,9 +28,18 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
+  let errorStatus = err.status || 500;
+  let errorMessage;
+
+  if (err.status == 404) {
+    errorMessage = "Not found.";
+  } else if (err.status == 500) {
+    errorMessage = "Internal server error.";
+  }
+
   // render the error page
-  res.status(err.status || 500);
-  res.render("error");
+  res.status(errorStatus);
+  res.json({ success: false, code: errorStatus, status: errorMessage });
 });
 
 module.exports = app;
