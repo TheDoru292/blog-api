@@ -7,7 +7,7 @@ router.get("/", post.getAll);
 
 router.post("/", auth.checkIfLogged, auth.checkIfAuthor, post.post);
 
-router.get("/:postUrl", post.get);
+router.get("/:para", post.get);
 
 router.put("/:postId", auth.checkIfLogged, auth.checkIfAuthor, post.edit);
 
