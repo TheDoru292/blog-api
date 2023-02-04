@@ -6,6 +6,10 @@ const PostSchema = new Schema({
   content: String,
   url: String,
   author: { type: Schema.Types.ObjectId, ref: "User" },
+  date: Date,
+  dateEdited: Date,
+  edited: Boolean,
+  posted: Boolean,
 });
 
 module.exports = mongoose.model("Post", PostSchema);
