@@ -3,7 +3,7 @@ const post = require("../models/post");
 const { body, validationResult } = require("express-validator");
 
 exports.getAll = (req, res, next) => {
-  comment.findOne({ post: req.params.postUrl }, (err, comment) => {
+  comment.find({ post: req.params.postId }, (err, comment) => {
     if (err) {
       return res.json({
         succesS: false,
@@ -22,13 +22,13 @@ exports.getAll = (req, res, next) => {
       });
     }
 
-    return res.json({ success: true, code: 200, result: posts });
+    return res.json({ success: true, code: 200, result: comment });
   });
 };
 
 exports.add = [
   body("username").trim().escape(),
-  body("comment").trim().escape(),
+  body("comment").isLength({ min: 1 }).trim().escape(),
 
   (req, res, next) => {
     const errors = validationResult(req);
@@ -43,7 +43,7 @@ exports.add = [
       });
     }
 
-    post.findById({ _id: req.params.postUrl }, (err, post) => {
+    post.findById({ _id: req.params.postId }, (err, post) => {
       if (err) {
         console.log(err);
         return res.json({
@@ -64,7 +64,7 @@ exports.add = [
       }
 
       const postObject = {
-        user: req.body.username,
+        user: "Anonymous",
         post: post._id,
         comment: req.body.comment,
         date: new Date(),
@@ -72,6 +72,7 @@ exports.add = [
 
       comment.create(postObject, (err, post) => {
         if (err) {
+          console.log(err);
           return res.json({
             success: false,
             code: 400,
