@@ -42,7 +42,7 @@ exports.login = [
           success: false,
           code: 400,
           status: "Bad request",
-          title: "User doesn't exist.",
+          title: "Invalid username or password.",
         });
       }
 
@@ -60,8 +60,10 @@ exports.login = [
           const accessToken = jwt.sign(
             { username: user.username },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "10m" }
+            { expiresIn: "1d" }
           );
+
+          console.log(accessToken);
 
           const refreshToken = jwt.sign(
             { username: user.username },
@@ -69,10 +71,7 @@ exports.login = [
             { expiresIn: "1d" }
           );
 
-          res.cookie("jwt", refreshToken, {
-            httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000,
-          });
+          res.cookie("jwt", accessToken);
 
           return res.json({ success: true, token: accessToken });
         } else {
@@ -142,8 +141,27 @@ exports.refresh = (req, res) => {
   }
 };
 
+exports.getUserDetails = (req, res, next) => {
+  console.log(req.get("Authorization"));
+
+  user.findOne({ _id: req.user._id }, "username", (err, user) => {
+    if (err) {
+      return res.json({
+        success: false,
+        code: 400,
+        status: "Bad request",
+        title: "If you keep getting this error please contact us.",
+      });
+    }
+
+    return res.json({ success: true, user: user.username });
+  });
+};
+
 exports.checkIfLogged = (req, res, next) => {
   const token = req.get("Authorization").split(" ");
+
+  console.log(token);
 
   jwt.verify(token[1], process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
