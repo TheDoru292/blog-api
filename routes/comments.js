@@ -4,9 +4,9 @@ const mongoose = require("mongoose");
 
 const commentController = require("../controllers/commentController");
 
-router.get("/:postUrl", checkPostId, commentController.getAll);
+router.get("/:postId", checkPostId, commentController.getAll);
 
-router.post("/:postUrl", checkPostId, commentController.add);
+router.post("/:postId", checkPostId, commentController.add);
 
 function checkPostId(req, res, next) {
   if (!mongoose.isValidObjectId(req.params.postId)) {
