@@ -4,6 +4,7 @@ var router = express.Router();
 const comments = require("./comments");
 const auth = require("./auth");
 const post = require("./posts");
+const user = require("./user");
 
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODB_LINK);
@@ -20,5 +21,7 @@ router.use("/comment", comments);
 router.use("/auth", auth);
 
 router.use("/post", post);
+
+router.use("/user", user);
 
 module.exports = router;
